@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__.'/../config/database.php';
 
-class Parametro {
+class Parametros {
   private $conn;
   private $table = 'parametros';
 
@@ -12,14 +12,19 @@ class Parametro {
 
   public function getAll() {
     $stmt = $this->conn->prepare("SELECT * FROM {$this->table}");
+
     $stmt->execute();
+
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
-  public function getByName($nome) {
-    $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE nome = :nome LIMIT 1");
-    $stmt->bindParam(':nome', $nome);
+  public function getByChave($chave) {
+    $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE chave = :chave LIMIT 1");
+
+    $stmt->bindParam(':chave', $chave);
+
     $stmt->execute();
+
     return $stmt->fetch(PDO::FETCH_ASSOC);
   }
 }

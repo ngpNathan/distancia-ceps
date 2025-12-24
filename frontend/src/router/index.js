@@ -1,14 +1,27 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import IndexView from '@/views/IndexView.vue';
+
+import CalculaDistanciaView from '@/views/CalculaDistanciaView.vue';
+import DistanciasView from '@/views/DistanciasView.vue';
+import ImportarView from '@/views/ImportarView.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: 'routeIndex',
-    component: IndexView,
+    name: 'routeCalculaDistancia',
+    component: CalculaDistanciaView,
+  },
+  {
+    path: '/distancias',
+    name: 'routeDistancias',
+    component: DistanciasView,
+  },
+  {
+    path: '/importar',
+    name: 'routeImportar',
+    component: ImportarView,
   },
 ];
 

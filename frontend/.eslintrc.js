@@ -12,6 +12,7 @@ module.exports = {
     parser: '@babel/eslint-parser',
   },
   rules: {
+    "padded-blocks": "off",
     'prettier/prettier': [
       'error',
       {
