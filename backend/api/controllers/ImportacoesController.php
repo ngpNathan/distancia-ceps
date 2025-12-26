@@ -12,6 +12,19 @@ class ImportacoesController {
     $this->modelItem = new ImportacaoItens();
   }
 
+  public function getAll() {
+    $importacoes = $this->model->getAll();
+    $resultado = [];
+
+    foreach ($importacoes as $importacao) {
+      $itens = $this->modelItem->getByImportacaoId($importacao['id']);
+      $importacao['itens'] = $itens;
+      $resultado[] = $importacao;
+    }
+
+    echo json_encode($resultado);
+  }
+
   public function iniciarImportacao($arquivo) {
     try {
       if (!$arquivo) {

@@ -16,6 +16,21 @@ class ImportacaoItens {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
+  public function getByImportacaoId($importacaoId) {
+    $stmt = $this->conn->prepare(
+        "SELECT *
+           FROM importacao_itens
+          WHERE importacaoId = :importacaoId
+          ORDER BY dataInclusao ASC"
+    );
+
+    $stmt->bindParam(':importacaoId', $importacaoId);
+
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
   public function getNextItemPendente($importacaoId) {
     $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE importacaoId = :importacaoId AND status = 'PENDENTE' AND dataFim IS NULL ORDER BY id ASC LIMIT 1");
 

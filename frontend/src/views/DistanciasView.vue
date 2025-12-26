@@ -77,7 +77,6 @@ export default {
   },
 
   methods: {
-    // Helpers
     mascararCepTabela(cep) {
       if (!cep) return '';
 
