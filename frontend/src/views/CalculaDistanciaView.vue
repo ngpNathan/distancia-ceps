@@ -205,6 +205,7 @@
         this.loading = true;
 
         if (this.qtdReqApi >= this.limiteRequisicoesApi()) {
+          this.loading = false;
           this.$toasted.show(
             `Você atingiu o máximo de ${this.limiteRequisicoesApi()} requisições no intervalo de 1 minuto, aguarde para realizar novas consultas!`,
             { type: 'error', duration: 3000 }
@@ -216,8 +217,18 @@
         const _cepDestino = this.somenteNumeros(this.cepDestino);
 
         if (_cepOrigem.length != 8 || _cepDestino.length != 8) {
+          this.loading = false;
           this.$toasted.show(
             'CEP inválido, por favor informe o CEP de origem e destino corretamente!',
+            { type: 'error', duration: 3000 }
+          );
+          return;
+        }
+
+        if (_cepOrigem == _cepDestino) {
+          this.loading = false;
+          this.$toasted.show(
+            'Os CEPs devem ser diferentes!',
             { type: 'error', duration: 3000 }
           );
           return;

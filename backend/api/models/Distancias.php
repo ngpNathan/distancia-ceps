@@ -44,7 +44,7 @@ class Distancias {
     $stmt->bindParam(':cepOrigemJson', $data['cepOrigemJson']);
     $stmt->bindParam(':cepDestino', $data['cepDestino']);
     $stmt->bindParam(':cepDestinoJson', $data['cepDestinoJson']);
-    $stmt->bindParam(':distancia', floatval($data['distancia']));
+    $stmt->bindValue(':distancia', floatval($data['distancia']));
 
     $stmt->execute();
 

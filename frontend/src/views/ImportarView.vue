@@ -76,11 +76,10 @@ export default {
       formData.append('arquivo', this.arquivo);
 
       try {
-        const response = await this.$axios.post('/importacao', formData, {
+        await this.$axios.post('/importacao', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        console.log(response);
         this.$toasted.show('Arquivo enviado para importação com sucesso!', {
           type: 'success',
           duration: 3000,

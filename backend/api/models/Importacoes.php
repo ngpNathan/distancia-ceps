@@ -27,4 +27,45 @@ class Importacoes {
 
     return $this->conn->lastInsertId();
   }
+
+  public function updateTotalItens($importacaoId, $totalItens) {
+    $stmt = $this->conn->prepare(
+      "UPDATE {$this->table} SET totalItens = :totalItens WHERE id = :id"
+    );
+
+    $stmt->bindParam(':id', $importacaoId);
+    $stmt->bindParam(':totalItens', $totalItens);
+
+    $stmt->execute();
+  }
+
+  public function updateToProcessando($importacaoId) {
+    $stmt = $this->conn->prepare(
+      "UPDATE {$this->table} SET status = 'PROCESSANDO' WHERE id = :id"
+    );
+
+    $stmt->bindParam(':id', $importacaoId);
+
+    $stmt->execute();
+  }
+
+  public function updateProcessados($importacaoId) {
+    $stmt = $this->conn->prepare(
+      "UPDATE {$this->table} SET itensProcessados = itensProcessados + 1 WHERE id = :id"
+    );
+
+    $stmt->bindParam(':id', $importacaoId);
+
+    $stmt->execute();
+  }
+
+  public function finalizarImportacao($importacaoId) {
+    $stmt = $this->conn->prepare(
+      "UPDATE {$this->table} SET status = 'FINALIZADA', dataFim = NOW() WHERE id = :id"
+    );
+
+    $stmt->bindParam(':id', $importacaoId);
+
+    $stmt->execute();
+  }
 }

@@ -16,6 +16,16 @@ class ImportacaoItens {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
+  public function getNextItemPendente($importacaoId) {
+    $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE importacaoId = :importacaoId AND status = 'PENDENTE' AND dataFim IS NULL ORDER BY id ASC LIMIT 1");
+
+    $stmt->bindParam(':importacaoId', $importacaoId);
+
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
   public function insertComErro(
     $importacaoId,
     $cepOrigem,
@@ -54,5 +64,27 @@ class ImportacaoItens {
     $stmt->execute();
 
     return $this->conn->lastInsertId();
+  }
+
+  public function updateStatus($itemId, $status, $mensagemErro = null) {
+    $stmt = $this->conn->prepare(
+      "UPDATE {$this->table} SET status = :status, mensagemErro = :mensagemErro WHERE id = :id"
+    );
+
+    $stmt->bindParam(':id', $itemId);
+    $stmt->bindParam(':status', $status);
+    $stmt->bindParam(':mensagemErro', $mensagemErro);
+
+    $stmt->execute();
+  }
+
+  public function updateDataFim($itemId) {
+    $stmt = $this->conn->prepare(
+      "UPDATE {$this->table} SET dataFim = NOW() WHERE id = :id"
+    );
+
+    $stmt->bindParam(':id', $itemId);
+
+    $stmt->execute();
   }
 }

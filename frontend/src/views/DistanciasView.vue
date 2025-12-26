@@ -5,7 +5,7 @@
         <div class="col-md-8">
           <div class="card">
             <div class="card-header">
-              <h5>distanc</h5>
+              <h5>Distâncias</h5>
             </div>
             <div class="card-body">
               <table class="table table-striped table-bordered shadow-sm">
@@ -49,7 +49,7 @@
                     <td>{{ item.dataInclusao }}</td>
                   </tr>
                   <tr v-if="itemsDistancias.length === 0">
-                    <td colspan="4" class="text-center">
+                    <td colspan="6" class="text-center">
                       Nenhum registro cadastrado
                     </td>
                   </tr>

@@ -1,0 +1,52 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: app_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    container_name: app_backend
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8
+    container_name: app_db
+    environment:
+      MYSQL_DATABASE: ceps
+      MYSQL_ROOT_PASSWORD: 1234
+      TZ: America/Sao_Paulo
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "3307:3306"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  rabbitmq_worker:
+    build: ./backend
+    container_name: rabbitmq_worker
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - rabbitmq
+    entrypoint: ["php", "/app/api/rabbitmq/worker.php"]
+    restart: always
+
+volumes:
+  db_data:

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/../models/Importacoes.php';
 require_once __DIR__.'/../models/ImportacaoItens.php';
+require_once __DIR__ . '/../rabbitmq/producer.php';
 
 class ImportacoesController {
   private $model;
@@ -27,20 +28,18 @@ class ImportacoesController {
         throw new Exception('Não foi possível abrir o arquivo CSV!');
       }
 
-      $header = fgetcsv($handle, 0, '|');
+      $header = fgetcsv($handle, 0, ';');
       if (!$header) {
         throw new Exception('Arquivo CSV vazio ou sem cabeçalho!');
       }
 
-      error_log(print_r($header, true));
       $header = array_map(function ($col) {
-        return strtolower(trim($col));
+        return strtolower(preg_replace('/^\xEF\xBB\xBF/', '', trim($col)));
       }, $header);
-      error_log(print_r($header, true));
 
       $colunasObrigatorias = ['cep origem', 'cep fim'];
       foreach ($colunasObrigatorias as $coluna) {
-        if (!in_array($coluna, $header)) {
+        if (!in_array($coluna, $header, true)) {
           throw new Exception("Coluna obrigatória '{$coluna}' não encontrada no CSV!");
         }
       }
@@ -50,11 +49,15 @@ class ImportacoesController {
       $idxOrigem  = array_search('cep origem', $header);
       $idxDestino = array_search('cep fim', $header);
 
+      $totalItens = 0;
+
       while (($row = fgetcsv($handle, 0, ';')) !== false) {
         $cepOrigem  = preg_replace('/\D/', '', $row[$idxOrigem] ?? '');
         $cepDestino = preg_replace('/\D/', '', $row[$idxDestino] ?? '');
 
-        if (strlen($cepOrigem) !== 8 || strlen($cepDestino) !== 8) {
+        $totalItens++;
+
+        if (strlen($cepOrigem) !== 8 || strlen($cepDestino) !== 8 || $cepOrigem == $cepDestino) {
           $this->modelItem->insertComErro(
             $importacaoId,
             $cepOrigem,
@@ -70,6 +73,13 @@ class ImportacoesController {
           $cepDestino
         );
       }
+
+      $this->model->updateTotalItens($importacaoId, $totalItens);
+
+      $producer = new Producer();
+      $producer->publish([
+        'importacao_id' => $importacaoId
+      ]);
 
       fclose($handle);
 
