@@ -18,20 +18,14 @@ $connection = new AMQPStreamConnection(
 
 $channel = $connection->channel();
 
-/**
- * Exchange
- */
 $channel->exchange_declare(
-  'importacoes',   // nome
-  'direct',        // tipo
-  false,           // passive
-  true,            // durable
-  false            // auto_delete
+  'importacoes',
+  'direct',
+  false,
+  true,
+  false
 );
 
-/**
- * Queue
- */
 $channel->queue_declare(
   'importacoes.distancias',
   false,
@@ -40,9 +34,6 @@ $channel->queue_declare(
   false
 );
 
-/**
- * Bind
- */
 $channel->queue_bind(
   'importacoes.distancias',
   'importacoes',
